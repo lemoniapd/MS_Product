@@ -1,0 +1,31 @@
+version: "3.9"
+
+services:
+  my-mysql-msproduct:
+    image: mysql
+    container_name: my-mysql-msproduct
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_DATABASE: MS_Product
+      MYSQL_USER: productUser
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+      MYSQL_RANDOM_ROOT_PASSWORD: 'yes'
+    volumes:
+      - ./sql:/docker-entrypoint-initdb.d
+    networks:
+      - my-network
+
+  my-msproduct:
+    image: product
+    container_name: my-msproduct
+    ports:
+      - "8080:8080"
+    environment:
+      DB_PASSWORD: ${DB_PASSWORD}
+      MYSQL_HOST: my-mysql-msproduct
+    networks:
+      - my-network
+
+networks:
+  my-network:

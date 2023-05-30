@@ -12,10 +12,6 @@ public class MS_ProductApplication {
         SpringApplication.run(MS_ProductApplication.class, args);
     }
 
-    @Bean
-    RestTemplate restTemplate() {
-        RestTemplate restTemplate = new RestTemplate();
-        return restTemplate;
-    }
+
 
 }

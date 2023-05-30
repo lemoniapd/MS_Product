@@ -28,14 +28,14 @@ public class ProductController {
         return productRepo.findById(id).orElse(null);
     }
 
+    @ResponseStatus(code = HttpStatus.CREATED)
     @PostMapping("/add")
-    public String addProduct(@RequestBody Product product) {
-        try {
-            productRepo.save(product);
-            return product.getName() + " is added to database";
-        } catch (Exception e){
-            return "Something went wrong when trying to add product!";
-        }
+    public String addProduct(@RequestBody @Valid ProductForm productForm) {
+        Product product = new Product();
+        product.setName(productForm.getName());
+        product.setPrice(productForm.getPrice());
+        productRepo.save(product);
+        return product.getName() + " is added to database";
     }
 
 }

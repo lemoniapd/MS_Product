@@ -1,11 +1,15 @@
 package com.example.MS_Product.Controllers;
 
 import com.example.MS_Product.Models.Product;
+import com.example.MS_Product.Models.ProductForm;
 import com.example.MS_Product.Repositories.ProductRepository;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
@@ -25,7 +29,7 @@ public class ProductController {
 
     @RequestMapping("/{id}")
     public Product getProductById(@PathVariable Long id) {
-        return productRepo.findById(id).orElse(null);
+        return productRepo.findById(id).orElseThrow(() -> new ProductNotFoundException(id));
     }
 
     @ResponseStatus(code = HttpStatus.CREATED)
@@ -36,6 +40,16 @@ public class ProductController {
         product.setPrice(productForm.getPrice());
         productRepo.save(product);
         return product.getName() + " is added to database";
+    }
+
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    @ExceptionHandler(ProductNotFoundException.class)
+    public ErrorResponse handleOrdersNotFoundException(ProductNotFoundException e) {
+        ErrorResponse error = new ErrorResponse();
+        error.setMessage(e.getMessage());
+        error.setTimestamp(LocalDateTime.now());
+        error.setStatus(HttpStatus.NOT_FOUND);
+        return error;
     }
 
 }
